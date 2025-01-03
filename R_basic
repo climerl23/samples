@@ -1,0 +1,41 @@
+library(ggplot2)
+library(rio)
+
+data <- read.csv("C:/Users/clime/Downloads/binary.csv")
+
+data$ADMIT <- as.factor(data$admit)
+str(data)
+summary(data)
+
+ggplot(data,aes(ADMIT,gpa,fill=ADMIT))+
+  geom_boxplot()+
+  theme_bw()+
+  xlab("ADMIT")+
+  ylab("GPA")+
+  ggtitle("Admit BY GPA") #boxplot
+
+library(caret)  #For data spliting
+set.seed(400)   #For reproducibiity
+ind <- createDataPartition(data$ADMIT,p=0.80,list = FALSE)
+training <- data[ind,] #training data set
+testing <- data[-ind,] #Testing data set
+
+mymodel <- glm(ADMIT~gpa,data=training,family=binomial(link = "logit"))
+summary(mymodel)
+
+fit <- glm(ADMIT~gpa + gre,data=data, family=binomial(link = 'logit'))
+summary(fit)
+
+tita = read.table("C:/Users/clime/Downloads/titanic.txt", header=TRUE, sep="\t")
+tita$Survived <- as.factor(tita$Survived)
+tita$Pclass   <- as.factor(tita$Pclass)
+summary(tita)
+require(mosaic)
+
+tally(~ Sex + Survived, data = tita, margins = T) #contingency table
+tally(~ Pclass + Survived, data = tita, margins = T)
+titfit <- glm(Survived~ Pclass + Sex + Age,data=tita, family=binomial(link = 'logit'))
+summary(titfit)
+
+barplot(prop.table(table(tita$Survived,tita$Pclass)))
+barplot(tally(~ Pclass + Survived, data = tita, margins = T)) #barplot
