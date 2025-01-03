@@ -1,0 +1,22 @@
+import pandas as pd
+import pprint as p
+#pd.set_option('display.max_colwidth', None)
+
+#reading json file "C:\Users\clime\OneDrive\Documents\clinical.cohort.2024-09-30.json"
+df = pd.read_json('C:/Users/clime/OneDrive/Documents/clinical.cohort.2024-09-30.json')
+
+#print(df.head)
+#df1 = pd.json_normalize(df, 'case_id', 'diagnoses', 'demographic')
+#print(df.head)
+test = pd.json_normalize(
+    df.to_dict(orient = 'records'),  # Convert DataFrame to list of dicts
+    record_path = 'diagnoses',        # Specify the field to normalize
+    meta = ['case_id', 
+          ['demographic', 'gender'],
+          ['demographic', 'age_at_index'],
+          ['demographic', 'race'], 
+          ['demographic','age_is_obfuscated']],
+    errors = 'ignore'
+)
+
+p.pprint(df.head)
